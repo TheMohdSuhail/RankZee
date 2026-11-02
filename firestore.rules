@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (request.auth.token.admin == true || request.auth.token.role == 'admin');
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      allow update: if (isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']))) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Leads collection: Public can submit with validation; only admin can view/manage
+    match /leads/{leadId} {
+      allow create: if request.resource.data.name is string &&
+                       request.resource.data.name.size() > 1 &&
+                       request.resource.data.email is string &&
+                       request.resource.data.phone is string &&
+                       request.resource.data.service is string &&
+                       request.resource.data.status == 'new';
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Consultations collection: Public can book; only admin can read/manage
+    match /consultations/{consultationId} {
+      allow create: if request.resource.data.name is string &&
+                       request.resource.data.name.size() > 1 &&
+                       request.resource.data.email is string &&
+                       request.resource.data.date is string &&
+                       request.resource.data.timeSlot is string;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Contact messages collection: Public can send; only admin can read/manage
+    match /contactMessages/{messageId} {
+      allow create: if request.resource.data.name is string &&
+                       request.resource.data.name.size() > 1 &&
+                       request.resource.data.email is string &&
+                       request.resource.data.message is string &&
+                       request.resource.data.message.size() > 5;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Newsletter subscriptions: Public can subscribe
+    match /newsletter/{subId} {
+      allow create: if request.resource.data.email is string &&
+                       request.resource.data.email.matches('^[^@]+@[^@]+\\.[^@]+$');
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Orders: Users read their own orders; admin has full access
+    match /orders/{orderId} {
+      allow read: if (isAuthenticated() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isAdmin();
+    }
+
+    // Public CMS collections: Public read if published/active; Admin full CRUD
+    match /services/{serviceId} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /portfolio/{portfolioId} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /blogPosts/{postId} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /testimonials/{testimonialId} {
+      allow read: if resource.data.published == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /pricingPlans/{planId} {
+      allow read: if resource.data.active == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}
