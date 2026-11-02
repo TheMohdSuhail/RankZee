@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
               color: "#64748b",
             }}
           >
-            <span>rankzee.com</span>
+            <span>rankzee.in</span>
             <span style={{ color: "#00F5FF" }}>The Modern Growth & SEO Engine</span>
           </div>
         </div>

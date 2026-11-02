@@ -164,7 +164,7 @@ export function HeroSection() {
             {/* Google Result #1 Mock */}
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-50/70 border border-slate-200/80 hover:border-blue-300 transition-colors">
               <div className="flex items-center gap-2 mb-1.5 text-xs text-slate-600">
-                <span className="font-semibold text-slate-800">rankzee.com</span>
+                <span className="font-semibold text-slate-800">rankzee.in</span>
                 <span>›</span>
                 <span>solutions</span>
                 <span>›</span>

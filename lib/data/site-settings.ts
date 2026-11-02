@@ -3,8 +3,8 @@ export const siteSettings = {
   tagline: "The Modern Growth & Digital Dominance Engine",
   legalName: "RankZee Digital Solutions Private Limited",
   description: "RankZee is a premier technology-driven digital marketing agency specializing in Search Engine Optimization (SEO), Paid Ads (Google & Meta), High-Speed Next.js Web Development, and Growth Marketing.",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://rankzee.com",
-  email: process.env.NEXT_PUBLIC_COMPANY_EMAIL || "contact@rankzee.com",
+  url: (process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://www.rankzee.in").replace(/\/+$/, ""),
+  email: process.env.COMPANY_EMAIL || process.env.NEXT_PUBLIC_COMPANY_EMAIL || "contact@rankzee.in",
   phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || "+91 98765 43210",
   whatsapp: process.env.NEXT_PUBLIC_COMPANY_WHATSAPP || "+919876543210",
   address: {
@@ -17,7 +17,7 @@ export const siteSettings = {
   grievanceOfficer: {
     name: "Rajesh Malhotra",
     designation: "Head of Legal & Compliance",
-    email: "grievance@rankzee.com",
+    email: "grievance@rankzee.in",
     phone: "+91 98765 43219",
   },
   socials: {
